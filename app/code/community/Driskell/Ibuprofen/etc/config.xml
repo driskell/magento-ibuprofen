@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @copyright See LICENCE.md
+ * @package   Driskell_Ibuprofen
+ * @author    Jason Woods <devel@jasonwoods.me.uk>
+ */
+-->
+<config>
+    <modules>
+        <Driskell_Ibuprofen>
+            <version>1.0.0</version>
+        </Driskell_Ibuprofen>
+    </modules>
+    <global>
+        <blocks>
+            <driskell_ibuprofen>
+                <class>Driskell_Ibuprofen_Block</class>
+            </driskell_ibuprofen>
+            <page>
+                <rewrite>
+                    <html_head>Driskell_Ibuprofen_Block_Head</html_head>
+                </rewrite>
+            </page>
+        </blocks>
+        <models>
+            <driskell_ibuprofen>
+                <class>Driskell_Ibuprofen_Model</class>
+            </driskell_ibuprofen>
+        </models>
+    </global>
+    <default>
+        <driskell_ibuprofen>
+            <active>0</active>
+            <all_blocks>0</all_blocks>
+            <separated_controller>0</separated_controller>
+            <debug>0</debug>
+        </driskell_ibuprofen>
+    </default>
+</config>
