@@ -8,7 +8,7 @@
 /**
  * Head block
  */
-class Driskell_Ibuprofen_Block_Head extends Fishpig_Wordpress_Addon_OtherMedia_Block_Html_Head
+class Driskell_Ibuprofen_Block_Head extends Mage_Page_Block_Html_Head
 {
     /**
      * Give the head some ibuprofen to relive the painful loading experience
