@@ -14,6 +14,18 @@ This extension provides a similar solution by automatically creating separate bu
 
 The recommended installation method is to use composer. Alternatively, you can just copy the files into your Magento installation as you would any other extension.
 
+Add the following to your `composer.json` and then run `composer require driskell/magento-ibuprofen`.
+
+```json
+    "repositories": [
+        ...
+        {
+            "type": "vcs",
+            "url": "https://github.com/driskell/magento-ibuprofen"
+        }
+    ]
+```
+
 ## Configuration
 
 The following configuration options are currently available in System > Configuration > Driskell > Ibuprofen.
