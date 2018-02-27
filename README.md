@@ -2,6 +2,8 @@
 
 Medicine for the migraines of Magento 1's JS/CSS concatenation.
 
+![Example `head` output on a category page](intro.jpg)
+
 ## Overview
 
 When enabling the native JS and CSS concatenation in Magento 1, bundles are created for all assets in the header of the page. However, this is performed on a page-by-page basis. If the assets in the header are identical across several pages, then the bundle referred to will be the same bundle. This takes advantage of browser caching. However, it is common for the assets within the header to differ from page to page. For example, the product page includes additional assets, the cart page, and the checkout page too. For each of these pages, with concatenation enabled, a completely different bundle containing these additional items is created. This forces the user to download the same JavaScript and CSS again in new, larger bundles, just to get the missing code. Not ideal.
