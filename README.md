@@ -1,6 +1,6 @@
 # Ibuprofen for Magento
 
-Medicine for the migraines of Magento 1's JS/CSS concatenation.
+Medicine for the migraines of Magento 1's JS/CSS concatenation with sourcemap moisterizer.
 
 ![Example `head` output on a category page](intro.jpg)
 
@@ -37,3 +37,5 @@ Option | Description
 Enable | Does what it says on the tin. Won't actually do anything though unless you enable Magento's CSS or JS concatenation.
 Enable for non-head blocks | Sometimes you may have other blocks in your custom theme using the `page/html_head` block class. This will enable Ibuprofen on all blocks that use that class, instead of just the default Magento one located in the layout directly under `root`. If you're not sure what this means, that's nothing to worry about, and you'll be absolutely fine to leave it disabled.
 Separated controller action bundle | OK this one is super-advanced and for those with specific use-cases, and most users will not need this enabled. Essentially, the default behaviour is to make two bundles maximum per page. One will contain the site-wide bundle and the other a bundle specific to that page. In rare cases you might have lots of scripts for say, the product page, but also lots of scripts for say, different specific product types. Normally these all would appear in the second bundle, and if you have lots of scripts for the product page and only a tiny script for each product type, enabling this will pull those big product page scripts into a third bundle so the browser doesn't download them again and again. As mentioned, this is only needed in the most advanced cases.
+Generate source maps | This will create amazing sourcemaps that mean you can continue to debug your code perfectly as if concatenation was disabled. It will read any existing sourcemaps for source files too meaning things like webpack bundles will sourcemap too.
+Enable debug mode | Enabling this will output HTML comments around the generated HEAD elements with the layout handles processed and the time spent merging.

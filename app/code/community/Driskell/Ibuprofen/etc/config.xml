@@ -9,7 +9,7 @@
 <config>
     <modules>
         <Driskell_Ibuprofen>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </Driskell_Ibuprofen>
     </modules>
     <global>
@@ -27,14 +27,22 @@
             <driskell_ibuprofen>
                 <class>Driskell_Ibuprofen_Model</class>
             </driskell_ibuprofen>
+            <core>
+                <rewrite>
+                    <design_package>Driskell_Ibuprofen_Model_Mapper</design_package>
+                </rewrite>
+            </core>
         </models>
     </global>
     <default>
         <driskell_ibuprofen>
-            <active>0</active>
-            <all_blocks>0</all_blocks>
-            <separated_controller>0</separated_controller>
-            <debug>0</debug>
+            <general>
+                <active>0</active>
+                <all_blocks>0</all_blocks>
+                <separated_controller>0</separated_controller>
+                <sourcemaps>0</sourcemaps>
+                <debug>0</debug>
+            </general>
         </driskell_ibuprofen>
     </default>
 </config>

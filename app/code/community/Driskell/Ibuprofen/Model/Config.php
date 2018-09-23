@@ -13,6 +13,7 @@ class Driskell_Ibuprofen_Model_Config
     const XML_PATH_ACTIVE = 'driskell_ibuprofen/general/active';
     const XML_PATH_ALL_BLOCKS = 'driskell_ibuprofen/general/all_blocks';
     const XML_PATH_SEPARATED_CONTROLLER = 'driskell_ibuprofen/general/separated_controller';
+    const XML_PATH_SOURCEMAPS = 'driskell_ibuprofen/general/sourcemaps';
     const XML_PATH_DEBUG = 'driskell_ibuprofen/general/debug';
 
     /**
@@ -44,6 +45,16 @@ class Driskell_Ibuprofen_Model_Config
     public function isSeparatedController()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_SEPARATED_CONTROLLER);
+    }
+
+    /**
+     * Enable source map processing
+     *
+     * @return boolean
+     */
+    public function isSourceMaps()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_SOURCEMAPS);
     }
 
     /**
