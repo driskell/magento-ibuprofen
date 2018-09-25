@@ -80,6 +80,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
     protected function initSourceMap($srcFiles, $targetFile, $beforeMergeCallback)
     {
         $this->lastFile = count($srcFiles) ? $srcFiles[count($srcFiles) - 1] : null;
+        $this->targetType = pathinfo($targetFile, PATHINFO_EXTENSION);
         $this->targetFile = $targetFile;
         $this->originalBeforeMergeCallback = $beforeMergeCallback;
         $this->currentSource = 0;
@@ -96,10 +97,11 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
     protected function writeSourceMap()
     {
         // Sanity check
-        if (is_null($this->lastFile)) {
+        if (is_null($this->lastFile) || !in_array($this->targetType, array('js', 'css'))) {
             return false;
         }
 
+        // https://sourcemaps.info/spec.html
         $targetUrl = preg_replace('#^' . preg_quote(Mage::getBaseDir(), '/') . '#', '', $this->targetFile);
         $sourceMap = array(
             'version' => '3',
@@ -134,7 +136,11 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             )
         );
 
-        $contents = preg_replace_callback('#(?<=\r\n|\n|\r)\s*//(?:\\#|@) sourceMappingURL=([^ \r\n]*)\s*$#', array($this, 'replaceSourceMappingUrl'), $contents);
+        if ($this->targetType == 'css') {
+            $contents = preg_replace_callback('#(?<=\r\n|\n|\r)\s*/\\*(?:\\#|@) sourceMappingURL=([^ \r\n]*)\s*\\*/$#', array($this, 'replaceSourceMappingUrl'), $contents);
+        } else {
+            $contents = preg_replace_callback('#(?<=\r\n|\n|\r)\s*//(?:\\#|@) sourceMappingURL=([^ \r\n]*)\s*$#', array($this, 'replaceSourceMappingUrl'), $contents);
+        }
         $contentsLines = preg_split('#\r\n|\n|\r#', $contents);
 
         if (isset($this->sources[$this->currentSource]['url'])) {
@@ -175,7 +181,11 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         // Append source mapping to last file
         if ($file == $this->lastFile) {
             $sourceMapUrl = Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) . basename(dirname($this->targetFile)) . '/' . basename($this->targetFile);
-            $contents .= "\n//# sourceMappingURL=" . $sourceMapUrl . ".map\n";
+            if ($this->targetType == 'css') {
+                $contents .= "\n/*# sourceMappingURL=" . $sourceMapUrl . ".map*/\n";
+            } else {
+                $contents .= "\n//# sourceMappingURL=" . $sourceMapUrl . ".map\n";
+            }
         }
 
         return $contents;
