@@ -174,7 +174,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             );
         }
 
-        $this->sourceLine += count($contentsLines);
+        $this->sourceLine += count($contentsLines) - 1;
         $this->sourceColumn += strlen($contentsLines[count($contentsLines) - 1]);
         $this->currentSource++;
 
