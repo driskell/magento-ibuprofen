@@ -31,16 +31,17 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             return parent::_mergeFiles($srcFiles, $targetFile, $mustMerge, $beforeMergeCallback, $extensionsFilter);
         }
 
+        if (file_exists($targetFile)) {
+            $filemtime = filemtime($targetFile);
+        } else {
+            $filemtime = null;
+        }
+        $this->initSourceMap($srcFiles, $targetFile, $beforeMergeCallback);
+
         if (Mage::helper('core/file_storage_database')->checkDbUsage()) {
             if (!file_exists($targetFile)) {
                 Mage::helper('core/file_storage_database')->saveFileToFilesystem($targetFile);
             }
-            if (file_exists($targetFile)) {
-                $filemtime = filemtime($targetFile);
-            } else {
-                $filemtime = null;
-            }
-            $this->initSourceMap($srcFiles, $targetFile, $beforeMergeCallback);
             $result = Mage::helper('core')->mergeFiles(
                 $srcFiles,
                 $targetFile,
@@ -50,12 +51,12 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             );
             if ($result && (filemtime($targetFile) > $filemtime)) {
                 Mage::helper('core/file_storage_database')->saveFile($targetFile);
+                // mergeFiles return true if no merge necessary, false on failure, and string data if merge was done
                 if ($this->writeSourceMap()) {
                     Mage::helper('core/file_storage_database')->saveFile($targetFile . '.map');
                 }
             }
         } else {
-            $this->initSourceMap($srcFiles, $targetFile, $beforeMergeCallback);
             $result = Mage::helper('core')->mergeFiles(
                 $srcFiles,
                 $targetFile,
@@ -63,7 +64,9 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
                 array($this, 'beforeMergeCallback'),
                 $extensionsFilter
             );
-            $this->writeSourceMap();
+            if ($result && (filemtime($targetFile) > $filemtime)) {
+                $this->writeSourceMap();
+            }
         }
         return $result;
     }
