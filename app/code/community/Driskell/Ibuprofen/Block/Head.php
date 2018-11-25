@@ -17,7 +17,7 @@ class Driskell_Ibuprofen_Block_Head extends Mage_Page_Block_Html_Head
      */
     public function getCssJsHtml()
     {
-        $config = Mage::getModel('driskell_ibuprofen/config');
+        $config = Mage::getSingleton('driskell_ibuprofen/config');
         if (!$config->isActive()) {
             return parent::getCssJsHtml();
         }

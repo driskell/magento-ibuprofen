@@ -1,0 +1,23 @@
+{
+  "name": "magento-ibuprofen",
+  "version": "1.0.0",
+  "description": "Medicine for the migraines of Magento 1's JS/CSS concatenation with sourcemap and minification moisterizer.",
+  "main": "index.js",
+  "dependencies": {
+    "uglify-js": "^3.4.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/driskell/magento-ibuprofen.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/driskell/magento-ibuprofen/issues"
+  },
+  "homepage": "https://github.com/driskell/magento-ibuprofen#readme"
+}

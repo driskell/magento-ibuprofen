@@ -29,6 +29,8 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <expanded>1</expanded>
+                    <frontend_type>text</frontend_type>
+                    <comment>After modifying any settings, you will need to manually flush the CSS/JS cache from within System > Cache Management.</comment>
                     <fields>
                         <active translate="label">
                             <label>Enable</label>
@@ -60,11 +62,21 @@
                             <show_in_store>1</show_in_store>
                             <comment>This will generate a third bundle containing JavaScript and CSS attached to a controller's main handle. Useful if you have many custom modules adding controller specific scripts and you want to make the non-default scripts bundle more browser cacheable.</comment>
                         </separated_controller>
+                        <minification translate="label">
+                            <label>Minification</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>driskell_ibuprofen/system_config_source_minification</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select the type of minification to perform.</comment>
+                        </minification>
                         <sourcemaps translate="label">
                             <label>Generate source maps</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -74,7 +86,7 @@
                             <label>Enable debug mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

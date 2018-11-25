@@ -2,7 +2,7 @@
     "name": "driskell/magento-ibuprofen",
     "type": "magento-module",
     "license": "Apache-2.0",
-    "description": "Medicine for the migraines of Magento 1's JS/CSS concatenation.",
+    "description": "Medicine for the migraines of Magento 1's JS/CSS concatenation with sourcemap and minification moisterizer.",
     "authors": [
         {
             "name": "Jason Woods",
@@ -11,6 +11,7 @@
     ],
     "homepage": "https://github.com/driskell/magento-ibuprofen",
     "require": {
-        "magento-hackathon/magento-composer-installer": "*"
+        "magento-hackathon/magento-composer-installer": "*",
+        "eloquent/composer-npm-bridge": "^4.0"
     }
 }
