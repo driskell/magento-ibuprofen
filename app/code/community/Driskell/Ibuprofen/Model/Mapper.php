@@ -74,7 +74,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         }
 
         // Clear context
-        $this->init(null);
+        $this->reset();
 
         return $result;
     }
@@ -90,10 +90,25 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      */
     protected function init($srcFiles, $targetFile, $beforeMergeCallback)
     {
+        $this->reset();
         $this->lastFile = count($srcFiles) ? $srcFiles[count($srcFiles) - 1] : null;
         $this->targetType = pathinfo($targetFile, PATHINFO_EXTENSION);
         $this->targetFile = $targetFile;
         $this->originalBeforeMergeCallback = $beforeMergeCallback;
+    }
+
+    /**
+     * Reset processing
+     * Frees memory since we will likely be a singleton
+     *
+     * @return void
+     */
+    protected function reset()
+    {
+        $this->lastFile = null;
+        $this->targetType = null;
+        $this->targetFile = null;
+        $this->originalBeforeMergeCallback = null;
         $this->currentSource = 0;
         $this->sourceLine = 0;
         $this->sourceColumn = 0;
