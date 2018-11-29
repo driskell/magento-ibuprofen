@@ -5,6 +5,8 @@
  * @author    Jason Woods <devel@jasonwoods.me.uk>
  */
 
+use MatthiasMullie\Minify;
+
 /**
  * Source mapper
  */
@@ -53,7 +55,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             if ($result && (filemtime($targetFile) > $filemtime)) {
                 // mergeFiles return true if no merge necessary, false on failure, and string data if merge was done
                 $this->writeSourceMap();
-                $this->uglify($targetFile);
+                $this->minify($targetFile);
                 Mage::helper('core/file_storage_database')->saveFile($targetFile);
                 if (file_exists($targetFile . '.map')) {
                     Mage::helper('core/file_storage_database')->saveFile($targetFile . '.map');
@@ -69,7 +71,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             );
             if ($result && (filemtime($targetFile) > $filemtime)) {
                 $this->writeSourceMap();
-                $this->uglify($targetFile);
+                $this->minify($targetFile);
             }
         }
 
@@ -88,7 +90,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      *
      * @return void
      */
-    protected function init($srcFiles, $targetFile, $beforeMergeCallback)
+    private function init($srcFiles, $targetFile, $beforeMergeCallback)
     {
         $this->reset();
         $this->lastFile = count($srcFiles) ? $srcFiles[count($srcFiles) - 1] : null;
@@ -103,7 +105,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      *
      * @return void
      */
-    protected function reset()
+    private function reset()
     {
         $this->lastFile = null;
         $this->targetType = null;
@@ -120,7 +122,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      *
      * @return void
      */
-    protected function writeSourceMap()
+    private function writeSourceMap()
     {
         // Sanity check
         if (!Mage::getSingleton('driskell_ibuprofen/config')->isSourceMaps() || is_null($this->lastFile) || !in_array($this->targetType, array('js', 'css'))) {
@@ -145,17 +147,31 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      *
      * @return void
      */
-    protected function minify($file)
+    private function minify($file)
     {
-        $type = Mage::getSingleton('driskell_ibuprofen/config')->getMinification();
-        if (!$type || $this->targetType !== 'js') {
-            return;
-        }
-
-        if ($type == 'uglifyjs') {
-            $this->uglify($file, true);
-        } else if ($type = 'uglifyjs-m') {
-            $this->uglify($file, false);
+        switch ($this->targetType) {
+            case 'js':
+                $type = Mage::getSingleton('driskell_ibuprofen/config')->getMinificationJs();
+                switch ($type) {
+                    case 'uglifyjs':
+                        $this->uglify($file, true);
+                        break;
+                    case 'uglifyjs-m':
+                        $this->uglify($file, false);
+                        break;
+                    case 'minify':
+                        $this->phpMinify($file, $this->targetType);
+                        break;
+                }
+                break;
+            case 'css':
+                $type = Mage::getSingleton('driskell_ibuprofen/config')->getMinificationCss();
+                switch ($type) {
+                    case 'minify':
+                        $this->phpMinify($file, $this->targetType);
+                        break;
+                }
+                break;
         }
     }
 
@@ -167,7 +183,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      *
      * @return void
      */
-    protected function uglify($file, $compress)
+    private function uglify($file, $compress)
     {
         $config = Mage::getSingleton('driskell_ibuprofen/config');
         $tmpFile = tempnam(sys_get_temp_dir(), 'uglifyjs');
@@ -210,6 +226,48 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             file_put_contents($file . '.map', $resultMap, LOCK_EX);
             unlink($tmpFile . '.map');
         }
+    }
+
+    /**
+     * Minify
+     *
+     * @param string $file Filename of file being merged
+     * @param string $type Type of file (js or css)
+     *
+     * @return void
+     */
+    private function phpMinify($file, $type)
+    {
+        if ($type == 'js') {
+            $minifier = new Minify\JS($file);
+        } else if ($type == 'css') {
+            $minifier = new Minify\CSS($file);
+        } else {
+            return;
+        }
+
+        $result = $minifier->minify();
+        file_put_contents($file, $result, LOCK_EX);
+        if ($config->isSourceMaps()) {
+            // Not supported when using PHP minify
+            unlink($file . '.map');
+        }
+    }
+
+    /**
+     * Get source map URL
+     *
+     * @param string $file File to get the URL for
+     *
+     * @return string
+     */
+    private function getSourceMapUrl($file)
+    {
+        return Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) .
+            basename(dirname($file)) .
+            '/' .
+            basename($file) .
+            '.map';
     }
 
     /**
@@ -302,21 +360,5 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
     {
         $this->sources[$this->currentSource]['url'] = $match[1];
         return '';
-    }
-
-    /**
-     * Get source map URL
-     *
-     * @param string $file File to get the URL for
-     *
-     * @return string
-     */
-    protected function getSourceMapUrl($file)
-    {
-        return Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) .
-            basename(dirname($file)) .
-            '/' .
-            basename($file) .
-            '.map';
     }
 }

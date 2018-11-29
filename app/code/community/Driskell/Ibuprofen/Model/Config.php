@@ -15,7 +15,8 @@ class Driskell_Ibuprofen_Model_Config
     const XML_PATH_SEPARATED_CONTROLLER = 'driskell_ibuprofen/general/separated_controller';
     const XML_PATH_SOURCEMAPS = 'driskell_ibuprofen/general/sourcemaps';
     const XML_PATH_DEBUG = 'driskell_ibuprofen/general/debug';
-    const XML_PATH_MINIFICATION = 'driskell_ibuprofen/general/minification';
+    const XML_PATH_MINIFICATION_JS = 'driskell_ibuprofen/general/minification_js';
+    const XML_PATH_MINIFICATION_CSS = 'driskell_ibuprofen/general/minification_css';
 
     /**
      * Are we active?
@@ -49,13 +50,23 @@ class Driskell_Ibuprofen_Model_Config
     }
 
     /**
-     * Get minification type
+     * Get minification type for JS
      *
      * @return boolean
      */
-    public function getMinification()
+    public function getMinificationJs()
     {
-        return Mage::getStoreConfig(self::XML_PATH_MINIFICATION);
+        return Mage::getStoreConfig(self::XML_PATH_MINIFICATION_JS);
+    }
+
+    /**
+     * Get minification type for CSS
+     *
+     * @return boolean
+     */
+    public function getMinificationCss()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_MINIFICATION_CSS);
     }
 
     /**

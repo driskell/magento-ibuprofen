@@ -6,9 +6,9 @@
  */
 
 /**
- * Minification configuration
+ * Minification configuration for JS
  */
-class Driskell_Ibuprofen_Model_System_Config_Source_Minification
+class Driskell_Ibuprofen_Model_System_Config_Source_MinificationJs
 {
     /**
      * Options getter
@@ -20,7 +20,8 @@ class Driskell_Ibuprofen_Model_System_Config_Source_Minification
         return array(
             array('value' => '', 'label' => 'None'),
             array('value' => 'uglifyjs', 'label' => 'UglifyJS (Compress + Mangle; NodeJS required)'),
-            array('value' => 'uglifyjs-m', 'label' => 'UglifyJS (Mangle only; NodeJS required')
+            array('value' => 'uglifyjs-m', 'label' => 'UglifyJS (Mangle only; NodeJS required'),
+            array('value' => 'php-minify', 'label' => 'PHP minify (No sourcemap)')
         );
     }
 
@@ -35,6 +36,7 @@ class Driskell_Ibuprofen_Model_System_Config_Source_Minification
             '' => 'None',
             'uglifyjs' => 'UglifyJS (Compress + Mangle)',
             'uglifyjs-m' => 'UglifyJS (Mangle only)',
+            'php-minify' => 'PHP minify'
         );
     }
 }
