@@ -28,8 +28,17 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
     protected function _mergeFiles(array $srcFiles, $targetFile = false,
         $mustMerge = false, $beforeMergeCallback = null, $extensionsFilter = array()
     ) {
+        $this->init($srcFiles, $targetFile, $beforeMergeCallback);
+
         $config = Mage::getSingleton('driskell_ibuprofen/config');
-        if (!$config->isSourceMaps() && !$config->getMinification()) {
+        if ($this->targetType == 'js') {
+            $minify = $config->getMinificationJs();
+        } else if ($this->targetType == 'css') {
+            $minify = $config->getMinificationCss();
+        } else {
+            $minify = false;
+        }
+        if (!$config->isSourceMaps() && !$minify) {
             return parent::_mergeFiles($srcFiles, $targetFile, $mustMerge, $beforeMergeCallback, $extensionsFilter);
         }
 
@@ -38,8 +47,6 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         } else {
             $filemtime = null;
         }
-
-        $this->init($srcFiles, $targetFile, $beforeMergeCallback);
 
         if (Mage::helper('core/file_storage_database')->checkDbUsage()) {
             if (!file_exists($targetFile)) {
