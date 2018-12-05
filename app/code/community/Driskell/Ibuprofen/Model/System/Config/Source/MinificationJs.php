@@ -19,8 +19,8 @@ class Driskell_Ibuprofen_Model_System_Config_Source_MinificationJs
     {
         return array(
             array('value' => '', 'label' => 'None'),
-            array('value' => 'uglifyjs', 'label' => 'UglifyJS (Compress + Mangle; NodeJS required)'),
-            array('value' => 'uglifyjs-m', 'label' => 'UglifyJS (Mangle only; NodeJS required'),
+            array('value' => 'terser', 'label' => 'Terser (Compress + Mangle; NodeJS required)'),
+            array('value' => 'terser-m', 'label' => 'Terser (Mangle only; NodeJS required'),
             array('value' => 'php-minify', 'label' => 'PHP minify (No sourcemap)')
         );
     }
@@ -34,8 +34,8 @@ class Driskell_Ibuprofen_Model_System_Config_Source_MinificationJs
     {
         return array(
             '' => 'None',
-            'uglifyjs' => 'UglifyJS (Compress + Mangle)',
-            'uglifyjs-m' => 'UglifyJS (Mangle only)',
+            'terser' => 'Terser (Compress + Mangle)',
+            'terser-m' => 'Terser (Mangle only)',
             'php-minify' => 'PHP minify'
         );
     }

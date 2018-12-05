@@ -160,11 +160,11 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             case 'js':
                 $type = Mage::getSingleton('driskell_ibuprofen/config')->getMinificationJs();
                 switch ($type) {
-                    case 'uglifyjs':
-                        $this->uglify($file, true);
+                    case 'terser':
+                        $this->terser($file, true);
                         break;
-                    case 'uglifyjs-m':
-                        $this->uglify($file, false);
+                    case 'terser-m':
+                        $this->terser($file, false);
                         break;
                     case 'minify':
                         $this->phpMinify($file, $this->targetType);
@@ -183,21 +183,21 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
     }
 
     /**
-     * Uglify
+     * Terser
      *
      * @param string $file Filename of file being merged
-     * @param bool $compress Enable or disable UglifyJS compression
+     * @param bool $compress Enable or disable Terser compression
      *
      * @return void
      */
-    private function uglify($file, $compress)
+    private function terser($file, $compress)
     {
         $config = Mage::getSingleton('driskell_ibuprofen/config');
-        $tmpFile = tempnam(sys_get_temp_dir(), 'uglifyjs');
+        $tmpFile = tempnam(sys_get_temp_dir(), 'terser');
 
         // This call is direct into the module as the .bin folder uses symlinks
         // and it is usual for modman to lose them during the copy to Magento root
-        $command = dirname(dirname(__FILE__)) . DS . 'node_modules' . DS . 'uglify-js' . DS . 'bin' . DS . 'uglifyjs';
+        $command = dirname(dirname(__FILE__)) . DS . 'node_modules' . DS . 'terser' . DS . 'bin' . DS . 'uglifyjs';
         chmod($command, 0755);
 
         $command .= ' ' . $file;
