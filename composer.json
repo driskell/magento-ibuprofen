@@ -12,10 +12,16 @@
     "homepage": "https://github.com/driskell/magento-ibuprofen",
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
-        "eloquent/composer-npm-bridge": "^4.0",
-        "matthiasmullie/minify": "^1.3"
+        "matthiasmullie/minify": "^1.3",
+        "eloquent/composer-npm-bridge": "4.1.0"
+    },
+    "require-dev": {
+        "composer/composer": "dev-master"
     },
     "extra": {
-        "magento-root-dir": "root"
+        "magento-root-dir": "root",
+        "npm-bridge": {
+            "optional": true
+        }
     }
 }
