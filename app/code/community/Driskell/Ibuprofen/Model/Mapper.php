@@ -209,9 +209,9 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         }
 
         // Mangle
-        $command .= ' -m';
+        $command .= ' --mangle ' . escapeshellarg('reserved=[\'$super\']');
         // Keep some important comments
-        $command .= ' --comments "/^\**!|@preserve|@license|@cc_on/i"';
+        $command .= ' --comments ' . escapeshellarg('/^\**!|@preserve|@license|@cc_on/i');
 
         if ($config->isSourceMaps()) {
             // Generate a source map using the original input sourcemap we have built
