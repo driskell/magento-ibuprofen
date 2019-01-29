@@ -22,6 +22,11 @@
         "magento-root-dir": "root",
         "npm-bridge": {
             "optional": true
-        }
+        },
+        "map": [
+            ["app/code/community/Driskell/Ibuprofen", "app/code/community/Driskell/Ibuprofen"],
+            ["app/etc/modules/Driskell_Ibuprofen.xml", "app/etc/modules/Driskell_Ibuprofen.xml"],
+            ["node_modules", "app/code/community/Driskell/Ibuprofen/node_modules"]
+        ]
     }
 }

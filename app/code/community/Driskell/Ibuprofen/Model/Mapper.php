@@ -197,9 +197,9 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
 
         // This call is direct into the module as the .bin folder uses symlinks
         // and it is usual for modman to lose them during the copy to Magento root
-        $command = dirname(dirname(__FILE__)) . DS . 'node_modules' . DS . 'terser' . DS . 'bin' . DS . 'uglifyjs';
-        chmod($command, 0755);
-
+        // Furthermore, permissions are lost in copy mode, so invoke node directly
+        $command = '/usr/bin/env node';
+        $command .= ' ' . dirname(dirname(__FILE__)) . DS . 'node_modules' . DS . 'terser' . DS . 'bin' . DS . 'uglifyjs';
         $command .= ' ' . $file;
         $command .= ' --output ' . $tmpFile;
 
@@ -215,7 +215,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
 
         if ($config->isSourceMaps()) {
             // Generate a source map using the original input sourcemap we have built
-            $command .= ' --source-map "content=\'' . $file . '.map\',url=\'' . $this->getSourceMapUrl($file) . '\'"';
+            $command .= ' --source-map "includeSources=true,content=\'' . $file . '.map\',url=\'' . $this->getSourceMapUrl($file) . '\'"';
         }
 
         $fd = popen($command, 'r');

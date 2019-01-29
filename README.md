@@ -49,3 +49,7 @@ JS Minification | If the server environment has NodeJS available, and it was ava
 CSS Minification | Enable PHP Minify to reduce the size of the CSS bundle files.
 Generate source maps | This will create amazing sourcemaps that mean you can continue to debug your code perfectly as if concatenation was disabled. It will read any existing sourcemaps for source files too meaning things like webpack bundles will sourcemap too. Note that with Terser's compress option enabled, sourcemaps can sometimes be inaccurate due to code changes made by the compression transforms. Additionally, when using PHP Minify, sourcemaps will not be produced due to lack of support with that minifier.
 Enable debug mode | Enabling this will output HTML comments around the generated HEAD elements with the layout handles processed and the time spent merging.
+
+## Links
+
+* [Changelog](./CHANGELOG.md)
