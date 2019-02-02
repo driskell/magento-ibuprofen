@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.8
+
+* Drop PHP 5.6/7.0/7.1 from README as they are EOL
+* Fix incorrect sourceRoot of existing sourcemaps
+* Upgrade terser to get patch for missing sourcemap sources (terser-js/terser#248)
+* Various sourcemap generation improvements
+
 ## 1.3.7
 
 * Execute permissions are now not required for node_modules terser binary during composer install

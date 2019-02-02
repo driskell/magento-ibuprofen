@@ -4,7 +4,7 @@
   "description": "Medicine for the migraines of Magento 1's JS/CSS concatenation with sourcemap and minification moisterizer.",
   "main": "index.js",
   "dependencies": {
-    "terser": "^3.11.0"
+    "terser": "^3.16.0"
   },
   "devDependencies": {},
   "scripts": {

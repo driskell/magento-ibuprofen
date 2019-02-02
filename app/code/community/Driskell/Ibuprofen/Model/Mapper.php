@@ -137,7 +137,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         }
 
         // https://sourcemaps.info/spec.html
-        $targetUrl = preg_replace('#^' . preg_quote(Mage::getBaseDir(), '/') . '#', '', $this->targetFile);
+        $targetUrl = $this->makeAbsoluteUrl($this->targetFile);
         $sourceMap = array(
             'version' => '3',
             'file' => $targetUrl,
@@ -215,7 +215,7 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
 
         if ($config->isSourceMaps()) {
             // Generate a source map using the original input sourcemap we have built
-            $command .= ' --source-map "includeSources=true,content=\'' . $file . '.map\',url=\'' . $this->getSourceMapUrl($file) . '\'"';
+            $command .= ' --source-map "content=\'' . $file . '.map\',url=\'' . $this->getSourceMapUrl($file) . '\'"';
         }
 
         $fd = popen($command, 'r');
@@ -299,6 +299,10 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
             'offset' => array(
                 'line' => $this->sourceLine,
                 'column' => $this->sourceColumn,
+            ),
+            'map' => array(
+                // If needed when parsing sourceMappingURL
+                '__file__' => $file,
             )
         );
 
@@ -309,32 +313,12 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
         }
         $contentsLines = preg_split('#\r\n|\n|\r#', $contents);
 
-        if (isset($this->sources[$this->currentSource]['url'])) {
-            // Make sourceMappingURL absolute if it is relative
-            $sourceMappingUrl = parse_url($this->sources[$this->currentSource]['url']);
-            if (isset($sourceMappingUrl['path'])) {
-                if (substr($sourceMappingUrl['path'], 0, 1) != '/') {
-                    $this->sources[$this->currentSource]['url'] = dirname($file) . '/' . $sourceMappingUrl['path'];
-                }
-            }
-
-            // Chrome does not support 'url' yet (I checked Chromium source) so load and embed
-            // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/devtools/front_end/sdk/SourceMap.js#L386
-            $sourceMapJson = file_get_contents($this->sources[$this->currentSource]['url']);
-            $sourceMap = $sourceMapJson ? json_decode($sourceMapJson, true) : false;
-            if ($sourceMap) {
-                unset($this->sources[$this->currentSource]['url']);
-                $this->sources[$this->currentSource]['map'] = $sourceMap;
-            } else {
-                $this->sources[$this->currentSource]['url'] = '';
-            }
-        }
-
-        if (!isset($this->sources[$this->currentSource]['map'])) {
+        // Did we find a source map and fill in? If not, create our own for this file
+        if (!empty($this->sources[$this->currentSource]['map']['__file__'])) {
             $this->sources[$this->currentSource]['map'] = array(
                 'version' => 3,
-                'file' => 'x',
-                'sources' => [preg_replace('#^' . preg_quote(Mage::getBaseDir(), '/') . '#', '', $file)],
+                'file' => '',
+                'sources' => [$this->makeAbsoluteUrl($file)],
                 'names' => [],
                 'mappings' => count($contentsLines) ? 'AAAA' . str_repeat(';AACA', count($contentsLines) - 1) : ''
             );
@@ -365,7 +349,80 @@ class Driskell_Ibuprofen_Model_Mapper extends Mage_Core_Model_Design_Package
      */
     public function replaceSourceMappingUrl($match)
     {
-        $this->sources[$this->currentSource]['url'] = $match[1];
+        $sourceMappingUrl = parse_url($match[1]);
+
+        // Chrome does not support 'url' yet (I checked Chromium source) so load and embed, but only if local filesystem
+        // If we wanted to do remove sourcemaps we'd need to handle downloading sources, so lets not
+        // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/devtools/front_end/sdk/SourceMap.js#L386
+        if (!empty($sourceMappingUrl['host'])) {
+            return '';
+        }
+
+        // Make sourceMappingURL absolute if it is relative so we can load it
+        $sourceMappingUrl = $this->makeRelativeAbsolute(dirname($this->sources[$this->currentSource]['map']['__file__']), $sourceMappingUrl['path']);
+
+        $sourceMapJson = file_get_contents($sourceMappingUrl);
+        $sourceMap = $sourceMapJson ? json_decode($sourceMapJson, true) : false;
+        if ($sourceMap) {
+            // Adjust sourceRoot and file to absolute if either is relative and convert to accessible URL
+            if (!empty($sourceMap['sourceRoot'])) {
+                $sourceMap['sourceRoot'] = $this->makeAbsoluteUrl(
+                    $this->makeRelativeAbsolute(dirname($sourceMappingUrl), $sourceMap['sourceRoot'])
+                );
+            }
+            if (!empty($sourceMap['file'])) {
+                $sourceMap['file'] = $this->makeAbsoluteUrl(
+                    $this->makeRelativeAbsolute(dirname($sourceMappingUrl), $sourceMap['file'])
+                );
+            }
+
+            // Process sections sourceRoot too
+            if (is_array($sourceMap['sections'])) {
+                foreach ($sourceMap['sections'] as $key => $section) {
+                    if (!empty($section['sourceRoot'])) {
+                        $sourceMap['sections'][$key]['sourceRoot'] = $this->makeAbsoluteUrl(
+                            $this->makeRelativeAbsolute(dirname($sourceMappingUrl), $section['sourceRoot'])
+                        );
+                    }
+                }
+            }
+
+            $this->sources[$this->currentSource]['map'] = $sourceMap;
+        }
+
         return '';
+    }
+
+    /**
+     * Make a relative path absolute
+     *
+     * @param string Current folder
+     *
+     * @return string
+     */
+    private function makeRelativeAbsolute($currentPath, $path)
+    {
+        $parsedPath = parse_url($path);
+        if (!isset($parsedPath['path']) || substr($parsedPath['path'], 0, 1) == '/') {
+            return $path;
+        }
+        return $currentPath . '/' . $path;
+    }
+
+    /**
+     * Make an absolute path into a URL
+     * Returns / if the path is not accessible from the web root
+     *
+     * @param string Path
+     *
+     * @return string
+     */
+    private function makeAbsoluteUrl($path)
+    {
+        $newPath = preg_replace('#^' . preg_quote(Mage::getBaseDir(), '/') . '#', '', $path);
+        if ($newPath == $path) {
+            return '/';
+        }
+        return $newPath;
     }
 }

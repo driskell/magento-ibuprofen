@@ -18,7 +18,7 @@ Finally, Ibuprofen is able to use Terser and/or PHP Minify to minify the final b
 
 * Magento 1.x Community (Tested on 1.9.2.4 and later) or Enterprise (Tested on 1.14.0.0 and later)
 * NodeJS and NPM (Optional - for Terser)
-* PHP 5.6/7.0/7.1/7.2
+* PHP 7.2
 
 ## Installation
 
